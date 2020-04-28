@@ -16,12 +16,12 @@ jobs:
     name: Go Build and Test
     strategy:
       matrix:
-        go-version: [1.13.x, 1.14.x]
+        go-version: [latest]
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     
     steps:
-    - name: Set up Go 1.x
+    - name: Setting up Go version ${{ matrix.go-version }}
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
@@ -41,5 +41,5 @@ jobs:
     - name: Build
       run: go build -v .
 
-    - name: Test
-      run: go test -v .
+    - name: Tests
+      run: go test ./...
