@@ -47,3 +47,8 @@ jobs:
       # Testovi failaju u svckitu jer im je potreban dev_env, pa komentiram
       #run: go test ./...
       run: go test -v .
+    
+    
+    - name: Setup golangci-lint Action
+      uses: nickhstr/action-setup-golangci-lint@v0.1.0
+
