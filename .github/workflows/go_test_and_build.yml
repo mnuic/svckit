@@ -49,7 +49,7 @@ jobs:
       run: go test -v .
     
     - name: GolangCI-Lint
-      uses: actions-contrib/golangci-lint@v1
+      uses: Mushus/golangci-linter@v1
       with:
         # Path to your GolangCI-Lint config within the repo (optional)
         config: .golangci.yml
