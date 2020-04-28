@@ -1,4 +1,4 @@
-name: Go
+name: Go test and build
 
 on:
   push:
@@ -47,14 +47,3 @@ jobs:
       # Testovi failaju u svckitu jer im je potreban dev_env, pa komentiram
       #run: go test ./...
       run: go test -v .
-    
-    - name: GolangCI-Lint
-      uses: Mushus/golangci-linter@v1
-      with:
-        # Path to your GolangCI-Lint config within the repo (optional)
-        config: .golangci.yml
-      #env:
-        # GitHub token for annotations (optional)
-        #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-
