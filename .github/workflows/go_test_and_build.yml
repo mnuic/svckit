@@ -49,12 +49,9 @@ jobs:
       run: go test -v .
     
     
-    - name: Setup golangci-lint
+    - name: Setup and Run golangci-lint
       uses: nickhstr/action-setup-golangci-lint@v0.1.0
       with:
         version: 1.25.1
-    - name: Run golangci-lint
-      uses: nickhstr/action-setup-golangci-lint@v0.1.0
-      with:
         working-directory: /home/runner/work/svckit/
-        args: run --config=/home/runner/work/svckit/.golangci.yml ./... 
+        args: run --config=/home/runner/work/svckit/.golangci.yml ./...
