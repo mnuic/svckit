@@ -21,10 +21,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
     
     steps:
-    - name: Setting up Go version ${{ matrix.go-version }}
+    - name: Setting Go v${{ matrix.go-version }}
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
+      env:
+        GO111MODULE: "on"
       id: go
 
     - name: Check out code into the Go module directory
@@ -42,4 +44,17 @@ jobs:
       run: go build -v .
 
     - name: Tests
-      run: go test ./...
+      # Testovi failaju u svckitu jer im je potreban dev_env, pa komentiram
+      #run: go test ./...
+      run: go test -v .
+    
+    - name: GolangCI-Lint
+      uses: matoous/golangci-lint-action@v1.1.0
+      with:
+        # Path to your GolangCI-Lint config within the repo (optional)
+        config: .golangci.yml
+      #env:
+        # GitHub token for annotations (optional)
+        #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+
