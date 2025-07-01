@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -140,13 +141,25 @@ func (l *listener) upgrade(tc net.Conn) (connCap, error) {
 				cc.forwardedFor += value
 			case "cookie":
 				cc.cookie = value
+
+				cookie, err := http.ParseCookie(value)
+				if err != nil {
+					log.Error(err)
+					break
+				}
+
+				// read session_id from cookie
+				for _, c := range cookie {
+					if c.Name == "session_id" {
+						cc.meta["session_id"] = c.Value
+					}
+				}
 			default:
 				log.S("key", key).S("value", value).Debug("header")
 			}
 			return nil
 		},
 	}
-
 	_, err := ug.Upgrade(tc)
 	return cc, err
 }
