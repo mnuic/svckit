@@ -26,6 +26,7 @@ type Conn struct {
 // connCap connection capabilities and usefull atributes
 type connCap struct {
 	deflateSupported bool
+	deflateDisabled  bool
 	userAgent        string
 	forwardedFor     string
 	meta             map[string]string
