@@ -149,7 +149,6 @@ func (l *listener) upgrade(tc net.Conn) (connCap, error) {
 
 				cookie, err := http.ParseCookie(value)
 				if err != nil {
-					log.Error(err)
 					break
 				}
 
