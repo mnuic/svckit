@@ -1,4 +1,4 @@
-function merge(full, diff) {
+function merge(full, diff, skipEnrichment) {
   for(let key in diff) {
     let d = diff[key];
     if (d === null || d === undefined) {
@@ -12,16 +12,18 @@ function merge(full, diff) {
         parent = full;
       }
       let current = full[key];
-      current["_collection"] = full;
-      current["_parent"] = parent;
-      current["_key"] = key;
-      delete current["_list"];
-      merge(current, d);
+      if (!skipEnrichment) {
+        current["_collection"] = full;
+        current["_parent"] = parent;
+        current["_key"] = key;
+        delete current["_list"];
+        merge(current, d);
+      }
       continue;
     }
     let prev = full[key];
     full[key] = d;
-    if (prev !== undefined && d !== prev) {
+    if (!skipEnrichment && prev !== undefined && d !== prev) {
       full["_"+key+"Change"] = {
         previous: prev,
         changedAt: (new Date).getTime(),
@@ -38,7 +40,6 @@ function sortCollection(parent) {
   for(let key in parent) {
     let child = parent[key];
     if (typeof child === 'object' && key.indexOf("_") !== 0) {
-      //console.log(key);
       list.push(child);
     }
   }
@@ -80,8 +81,8 @@ function addLists(parent) {
   }
 };
 
-module.exports = function(full, diff, skipLists) {
-  merge(full, diff);
+module.exports = function (full, diff, skipLists, skipEnrichment) {
+  merge(full, diff, skipEnrichment);
   if (!skipLists) { 
     addLists(full);
   }

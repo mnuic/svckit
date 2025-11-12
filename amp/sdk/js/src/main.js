@@ -8,11 +8,12 @@ const Ws        = require("./ws.js");
 module.exports = function(config) {
   let urls = {
     port: function() {
-      return config.port
-          ? ':' + config.port
-          : window.location.port === '' || window.location.port === '80'
-              ? ''
-              : ':' + window.location.port;
+      if ("port" in config) {
+        return config.port ? ":" + config.port : "";
+      }
+      return window.location.port === "" || window.location.port === "80"
+        ? ""
+        : ":" + window.location.port;
     },
     path: function(relative) {
       if (relative[0] == '/' )  { // if the path has prefix / 
@@ -109,6 +110,9 @@ module.exports = function(config) {
       return;
     }
     if (status.connected) {
+      if (config.onOpen) {
+        config.onOpen();
+      }
       transport.ready = true;
       subscribe();
     } else {
@@ -117,7 +121,7 @@ module.exports = function(config) {
   }
 
   transport.ws = Ws(urls.ws(), onMessage, onWsChange, config.v1);
-  let sub    = Sub(subscribe, config.v1, config.transformBody, config.skipLists);
+  let sub    = Sub(subscribe, config.v1, config.transformBody, config.skipLists, config.skipEnrichment);
   let req    = Req();
 
   let failHandlers = {
@@ -155,7 +159,7 @@ module.exports = function(config) {
     };
     send(msg);
   }
-  
+
   function close() {
     transport.ws.close();
   }
@@ -167,4 +171,4 @@ module.exports = function(config) {
     unSubscribe: sub.remove,
     close: close,
   };
-}
+};
