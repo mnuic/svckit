@@ -17,8 +17,8 @@ function merge(full, diff, skipEnrichment) {
         current["_parent"] = parent;
         current["_key"] = key;
         delete current["_list"];
-        merge(current, d);
       }
+      merge(current, d, skipEnrichment);
       continue;
     }
     let prev = full[key];
