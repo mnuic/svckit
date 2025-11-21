@@ -19,7 +19,9 @@ func ParseV1(buf []byte) *Msg {
 		return nil
 	}
 	v1 := struct {
-		Type          uint8 `json:"t,omitempty"`
+		Type          uint8  `json:"t,omitempty"`
+		Topic         string `json:"o,omitempty"`
+		CorrelationID uint64 `json:"c,omitempty"`
 		Subscriptions []struct {
 			Stream string `json:"s,omitempty"`
 			No     int64  `json:"n,omitempty"`
@@ -31,6 +33,13 @@ func ParseV1(buf []byte) *Msg {
 	}
 	if v1.Type == Ping {
 		return &Msg{Type: Ping}
+	}
+	if v1.Type == Request {
+		m := &Msg{Type: Request}
+		m.body = buf
+		m.topic = v1.Topic
+		m.CorrelationID = v1.CorrelationID
+		return m
 	}
 	if v1.Type != Subscribe {
 		log.S("header", string(buf)).ErrorS("unknown message type")
@@ -84,15 +93,17 @@ func (m *Msg) MarshalV1Deflate() ([]byte, bool) {
 
 func (m *Msg) marshalV1header() []byte {
 	v1 := struct {
-		Type       uint8  `json:"t,omitempty"`
-		Stream     string `json:"s,omitempty"`
-		No         int64  `json:"n,omitempty"`
-		Full       uint8  `json:"f,omitempty"`
-		UpdateType uint8  `json:"p,omitempty"`
+		Type          uint8  `json:"t,omitempty"`
+		Stream        string `json:"s,omitempty"`
+		No            int64  `json:"n,omitempty"`
+		Full          uint8  `json:"f,omitempty"`
+		UpdateType    uint8  `json:"p,omitempty"`
+		CorrelationID uint64 `json:"i,omitempty"`
 	}{
-		Type:   m.Type,
-		Stream: strings.TrimPrefix(m.URI, "sportsbook/"),
-		No:     m.Ts,
+		Type:          m.Type,
+		Stream:        strings.TrimPrefix(m.URI, "sportsbook/"),
+		No:            m.Ts,
+		CorrelationID: m.CorrelationID,
 	}
 	if m.UpdateType == Full {
 		v1.Full = 1
