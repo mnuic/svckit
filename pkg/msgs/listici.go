@@ -5,14 +5,14 @@ import (
 	"log"
 )
 
-//Vrste uplate
+// Vrste uplate
 const (
 	vrstaUplateInternet = "internet"
 	vrstaUplateTest     = "test"
 	tipSportski         = "sportski"
 )
 
-//Listici citanje listica igraca
+// Listici citanje listica igraca
 type Listici struct {
 	Offset      int64  `json:"offset"`
 	Limit       int64  `json:"limit"`
@@ -20,7 +20,7 @@ type Listici struct {
 	Tip         string `json:"tip"`
 }
 
-//ParseListici parsiraj json
+// ParseListici parsiraj json
 func ParseListici(body string, isTestIgrac bool) (*Listici, error) {
 	l := &Listici{}
 	if err := json.Unmarshal([]byte(body), l); err != nil {
@@ -32,6 +32,9 @@ func ParseListici(body string, isTestIgrac bool) (*Listici, error) {
 	}
 	if l.VrstaUplate == vrstaUplateInternet && isTestIgrac {
 		l.VrstaUplate = vrstaUplateTest
+	}
+	if l.Limit < 1 {
+		l.Limit = 1
 	}
 	if l.Limit > 100 {
 		l.Limit = 100
