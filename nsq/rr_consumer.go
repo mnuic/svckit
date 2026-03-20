@@ -53,8 +53,9 @@ func RrSub(topic string, handler func(string, []byte) (interface{}, error), opts
 		rsp, handlerErr := handler(eReq.Type, eReq.Body)
 		// ako je puklo vrati poruku u nsq
 		if handlerErr != nil && (s.requeueError == nil || handlerErr == s.requeueError) {
-			m.RequeueWithoutBackoff(RequeueDelay)
 			log.S("type", eReq.Type).S("correlationId", eReq.CorrelationId).Error(handlerErr)
+			m.DisableAutoResponse()			// explain go-nsq that we will respond manually
+			m.Requeue(RequeueDelay)			// send REQ manually and trigger backoff
 			return nil
 		}
 		// treba li odgovoriti

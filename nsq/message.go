@@ -31,6 +31,14 @@ func (m *Message) RequeueWithoutBackoff(delay time.Duration) {
 	m.nsqm.RequeueWithoutBackoff(delay)
 }
 
+func (m *Message) DisableAutoResponse() {
+	m.nsqm.DisableAutoResponse()
+}
+
+func (m *Message) Requeue(delay time.Duration) {
+	m.nsqm.Requeue(delay)
+}
+
 func (m *Message) Touch() {
 	m.nsqm.Touch()
 }
